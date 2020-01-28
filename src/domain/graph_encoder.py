@@ -1,10 +1,9 @@
 import numpy as np
 
-from src.domain.rnn_messenger import RNNMessenger
-
 
 class GraphEncoder:
-    def __init__(self):
+    def __init__(self, messenger: object):
+        self.messenger = messenger
         self.u_graph_node_features = None
         self.u_graph_neighbor_messages = None
 
@@ -20,9 +19,9 @@ class GraphEncoder:
         messages = np.zeros((number_of_graph_nodes,
                              number_of_graph_nodes,
                              self.u_graph_node_features.shape[2]))
-        messenger = RNNMessenger()
         for step in range(time_steps):
-            messages = messenger.compose_messages_from_nodes_to_targets(graph, node_features, edge_features, messages)
+            messages = self.messenger.compose_messages_from_nodes_to_targets(graph, node_features, edge_features,
+                                                                             messages)
         return messages
 
     def _encode_nodes(self, messages: np.ndarray, node_features: np.ndarray) -> np.ndarray:

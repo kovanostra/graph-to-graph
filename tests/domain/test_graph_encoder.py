@@ -3,14 +3,19 @@ from unittest import TestCase
 import numpy as np
 
 from src.domain.graph_encoder import GraphEncoder
+from src.domain.rnn_messenger import RNNMessenger
 from tests.fixtures.matrices_and_vectors import BASE_GRAPH, BASE_GRAPH_NODE_FEATURES, \
-    BASE_U_MATRIX, BASE_GRAPH_EDGE_FEATURES
+    BASE_U_MATRIX, BASE_GRAPH_EDGE_FEATURES, BASE_W_MATRIX
 
 
 class TestGraphEncoder(TestCase):
 
     def setUp(self) -> None:
-        self.graph_encoder = GraphEncoder()
+        self.rnn_messenger = RNNMessenger()
+        self.rnn_messenger.w_graph_node_features = 0.1 * BASE_W_MATRIX
+        self.rnn_messenger.w_graph_edge_features = 0.1 * BASE_W_MATRIX
+        self.rnn_messenger.w_graph_neighbor_messages = 0.1 * BASE_W_MATRIX
+        self.graph_encoder = GraphEncoder(self.rnn_messenger)
         self.graph_encoder.u_graph_node_features = 0.1 * BASE_U_MATRIX
         self.graph_encoder.u_graph_neighbor_messages = 0.1 * BASE_U_MATRIX
 
