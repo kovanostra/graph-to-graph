@@ -1,17 +1,15 @@
-import os
 from unittest import TestCase
 
 import numpy as np
 
-print(os.getcwd())
-from tests.fixtures.matrices_and_vectors import BASE_GRAPH_NODE_FEATURES, BASE_GRAPH
 from src.domain.node import Node
+from tests.fixtures.matrices_and_vectors import BASE_GRAPH_NODE_FEATURES, BASE_GRAPH
 
 
 class TestNode(TestCase):
     def setUp(self) -> None:
         self.current_node_id = 2
-        self.node = Node(self.current_node_id, BASE_GRAPH_NODE_FEATURES, BASE_GRAPH)
+        self.node = Node(BASE_GRAPH, BASE_GRAPH_NODE_FEATURES, self.current_node_id)
 
     def test_set_target(self):
         # Given
