@@ -1,8 +1,8 @@
 import numpy as np
 
-from src.domain.rnn_message import RNNMessage
 from src.domain.edge import Edge
 from src.domain.node import Node
+from src.domain.rnn_message import RNNMessage
 
 
 class RNNMessenger:
@@ -52,7 +52,8 @@ class RNNMessenger:
                 messages[neighbors_slice][0])
         return messages_from_the_other_neighbors
 
-    def _create_node(self, graph: np.ndarray, node_features: np.ndarray, start_node: int):
+    @staticmethod
+    def _create_node(graph: np.ndarray, node_features: np.ndarray, start_node: int):
         return Node(graph, node_features, start_node)
 
     @staticmethod
