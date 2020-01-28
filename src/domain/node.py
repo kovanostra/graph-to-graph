@@ -4,9 +4,10 @@ import numpy as np
 
 
 class Node:
-    def __init__(self, node_id: int, all_features: np.ndarray, graph: np.ndarray):
+    def __init__(self, graph: np.ndarray, all_nodes_features: np.ndarray, node_id: int):
+        self.graph = graph
         self.node_id = node_id
-        self.features = self._get_node_features(all_features)
+        self.features = self._get_node_features(all_nodes_features)
         self.neighbors = self._get_neighbors(graph)
         self.neighbors_count = len(self.neighbors)
         self.current_target = None

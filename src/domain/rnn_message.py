@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class Message:
+class RNNMessage:
     def __init__(self):
         self.node_input = None
         self.edge_input = None
