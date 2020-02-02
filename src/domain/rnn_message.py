@@ -1,12 +1,14 @@
 import numpy as np
 
+from src.domain.message import Message
 
-class RNNMessage:
+
+class RNNMessage(Message):
     def __init__(self):
+        super().__init__()
         self.node_input = None
         self.edge_input = None
         self.neighbors_input = None
-        self.value = None
 
     def compose(self):
         self.value = np.transpose(self._relu(self.node_input + self.edge_input + self.neighbors_input))

@@ -1,8 +1,10 @@
 import numpy as np
 
+from src.domain.messenger import Messenger
+
 
 class GraphEncoder:
-    def __init__(self, messenger: object):
+    def __init__(self, messenger: Messenger):
         self.messenger = messenger
         self.u_graph_node_features = None
         self.u_graph_neighbor_messages = None

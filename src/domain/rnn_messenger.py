@@ -1,11 +1,13 @@
 import numpy as np
 
 from src.domain.edge import Edge
+from src.domain.message import Message
+from src.domain.messenger import Messenger
 from src.domain.node import Node
 from src.domain.rnn_message import RNNMessage
 
 
-class RNNMessenger:
+class RNNMessenger(Messenger):
     def __init__(self):
         self.w_graph_node_features = None
         self.w_graph_edge_features = None
@@ -28,7 +30,7 @@ class RNNMessenger:
                 messages[node_slice] = message.value
         return messages
 
-    def _get_message_inputs(self, messages: np.ndarray, current_node, target_node_index: int, current_edge):
+    def _get_message_inputs(self, messages: np.ndarray, current_node, target_node_index: int, current_edge) -> Message:
         message = self._create_message()
         node_slice = current_node.get_slice_to_target()
         message.node_input = self.w_graph_node_features[node_slice].dot(current_node.features)
@@ -42,8 +44,8 @@ class RNNMessenger:
 
     def _get_messages_from_all_node_neighbors_except_target(self,
                                                             messages: np.ndarray,
-                                                            current_node,
-                                                            target_node_index: int):
+                                                            current_node: Node,
+                                                            target_node_index: int) -> Message:
         messages_from_the_other_neighbors = self._create_message()
         messages_from_the_other_neighbors.value = np.zeros(current_node.features.shape[0])
         if current_node.neighbors_count > 1:
@@ -53,13 +55,13 @@ class RNNMessenger:
         return messages_from_the_other_neighbors
 
     @staticmethod
-    def _create_node(graph: np.ndarray, node_features: np.ndarray, start_node: int):
+    def _create_node(graph: np.ndarray, node_features: np.ndarray, start_node: int) -> Node:
         return Node(graph, node_features, start_node)
 
     @staticmethod
-    def _create_edge(edge_features: np.ndarray, current_node):
+    def _create_edge(edge_features: np.ndarray, current_node: Node) -> Edge:
         return Edge(current_node.node_id, current_node.current_target, edge_features)
 
     @staticmethod
-    def _create_message():
+    def _create_message() -> Message:
         return RNNMessage()
