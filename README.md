@@ -1,3 +1,5 @@
+![Graph to graph](https://github.com/kovanostra/graph-to-graph/workflows/Graph%20to%20graph/badge.svg)
+
 # Multi-modal Graph-to-Graph Translation for Molecular Optimization
 
 ### Overview
