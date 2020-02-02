@@ -22,6 +22,19 @@ class GRUMessenger(Messenger):
                                                messages: np.array) -> np.array:
         pass
 
+    def _pass_through_update_gate(self, messages: np.array, current_node: Node, target_node_index: int,
+                                  node_features: np.array) -> np.array:
+        messages_from_the_other_neighbors = self._get_messages_from_all_node_neighbors_except_target(messages,
+                                                                                                     current_node,
+                                                                                                     target_node_index)
+        node_slice = current_node.get_slice_to_target()
+        update_gate_output = self._sigmoid(
+            self.w_tree_update_gate_features[node_slice].dot(node_features[current_node.node_id]) +
+            self.u_tree_update_gate[node_slice].dot(
+                messages_from_the_other_neighbors.value) +
+            self.b_tree_update_gate)
+        return update_gate_output
+
     def _get_messages_from_all_node_neighbors_except_target(self,
                                                             messages: np.ndarray,
                                                             current_node: Node,
@@ -36,3 +49,7 @@ class GRUMessenger(Messenger):
     @staticmethod
     def _create_message() -> Message:
         return GRUMessage()
+
+    @staticmethod
+    def _sigmoid(vector: np.ndarray) -> np.ndarray:
+        return np.exp(vector) / (np.exp(vector) + 1)

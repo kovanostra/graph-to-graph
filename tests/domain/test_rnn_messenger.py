@@ -2,17 +2,17 @@ from unittest import TestCase
 
 import numpy as np
 
-from tests.fixtures.matrices_and_vectors import BASE_GRAPH_NODES_NUMBER, BASE_GRAPH_NODE_FEATURES, \
-    BASE_GRAPH_EDGE_FEATURES, BASE_GRAPH, BASE_W_MATRIX
 from src.domain.rnn_messenger import RNNMessenger
+from tests.fixtures.matrices_and_vectors import BASE_GRAPH_NODES_NUMBER, BASE_GRAPH_NODE_FEATURES, \
+    BASE_GRAPH_EDGE_FEATURES, BASE_GRAPH, BASE_W_MATRIX, MULTIPLICATION_FACTOR
 
 
 class TestRNNMessenger(TestCase):
     def setUp(self) -> None:
         self.rnn_messenger = RNNMessenger()
-        self.rnn_messenger.w_graph_node_features = 0.1 * BASE_W_MATRIX
-        self.rnn_messenger.w_graph_edge_features = 0.1 * BASE_W_MATRIX
-        self.rnn_messenger.w_graph_neighbor_messages = 0.1 * BASE_W_MATRIX
+        self.rnn_messenger.w_graph_node_features = MULTIPLICATION_FACTOR * BASE_W_MATRIX
+        self.rnn_messenger.w_graph_edge_features = MULTIPLICATION_FACTOR * BASE_W_MATRIX
+        self.rnn_messenger.w_graph_neighbor_messages = MULTIPLICATION_FACTOR * BASE_W_MATRIX
 
     def test_get_the_messages_matrix_with_same_dimensions_as_the_graph(self):
         # Given
