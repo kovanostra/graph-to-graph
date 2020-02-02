@@ -19,6 +19,7 @@ class RNNMessenger(Messenger):
                                                edge_features: np.ndarray,
                                                messages: np.ndarray) -> np.ndarray:
         number_of_graph_nodes = node_features.shape[0]
+        new_messages = np.zeros_like(messages)
         for node_id in range(number_of_graph_nodes):
             current_node = self._create_node(graph, node_features, node_id)
             for target_node_index in range(current_node.neighbors_count):
@@ -27,8 +28,8 @@ class RNNMessenger(Messenger):
                 node_slice = current_node.get_slice_to_target()
                 message = self._get_message_inputs(messages, current_node, target_node_index, current_edge)
                 message.compose()
-                messages[node_slice] = message.value
-        return messages
+                new_messages[node_slice] = message.value
+        return new_messages
 
     def _get_message_inputs(self, messages: np.ndarray, current_node, target_node_index: int, current_edge) -> Message:
         message = self._create_message()

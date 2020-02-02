@@ -46,7 +46,7 @@ class TestRNNMessenger(TestCase):
         # Then
         self.assertTrue(np.array_equal(messages_non_zero_expected, messages_non_zero))
 
-    def test_get_the_expected_messages_from_the_a_node_after_one_time_step(self):
+    def test_get_the_expected_messages_from_a_node_after_one_time_step(self):
         messages_initial = np.zeros((BASE_GRAPH_NODES_NUMBER,
                                      BASE_GRAPH_NODES_NUMBER,
                                      BASE_GRAPH_NODE_FEATURES.shape[1]))

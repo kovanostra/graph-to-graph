@@ -6,7 +6,7 @@ from src.domain.gru_message import GRUMessage
 from src.domain.gru_messenger import GRUMessenger
 from src.domain.node import Node
 from tests.fixtures.matrices_and_vectors import BASE_W_MATRIX, BASE_GRAPH, BASE_GRAPH_NODE_FEATURES, \
-    MULTIPLICATION_FACTOR, BASE_B_VECTOR
+    MULTIPLICATION_FACTOR, BASE_B_VECTOR, BASE_GRAPH_EDGE_FEATURES
 
 
 class TestGRUMessenger(TestCase):
@@ -53,8 +53,8 @@ class TestGRUMessenger(TestCase):
         update_gate_output_expected = np.array([0.60587367, 0.60587367])
 
         # When
-        update_gate_output = self.gru_messenger._pass_through_update_gate(messages, current_node, target_node_index,
-                                                                          BASE_GRAPH_NODE_FEATURES)
+        update_gate_output = self.gru_messenger._pass_through_update_gate(messages, current_node,
+                                                                          BASE_GRAPH_NODE_FEATURES, target_node_index)
 
         # Then
         self.assertTrue(np.allclose(update_gate_output_expected, update_gate_output))
@@ -96,3 +96,21 @@ class TestGRUMessenger(TestCase):
 
         # Then
         self.assertTrue(np.allclose(current_memory_message_expected, current_memory_message))
+
+    def test_compose_messages_from_a_node_to_a_target_after_one_time_step(self):
+        # Given
+        messages = MULTIPLICATION_FACTOR * np.array([[[0, 0], [1, 1], [1, 1], [0, 0]],
+                                                     [[1, 1], [0, 0], [1, 1], [0, 0]],
+                                                     [[1, 1], [1, 1], [0, 0], [4, 2]],
+                                                     [[0, 0], [0, 0], [4, 2], [0, 0]]])
+        node_expected = 2
+        target_expected = 0
+        messages_expected = np.array([0.405994, 0.327169])
+
+        # When
+        messages = self.gru_messenger.compose_messages_from_nodes_to_targets(BASE_GRAPH, BASE_GRAPH_NODE_FEATURES,
+                                                                             BASE_GRAPH_EDGE_FEATURES,
+                                                                             messages)[node_expected, target_expected]
+
+        # Then
+        self.assertTrue(np.allclose(messages_expected, messages))

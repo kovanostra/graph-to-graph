@@ -10,7 +10,7 @@ class RNNMessage(Message):
         self.edge_input = None
         self.neighbors_input = None
 
-    def compose(self):
+    def compose(self) -> None:
         self.value = np.transpose(self._relu(self.node_input + self.edge_input + self.neighbors_input))
 
     @staticmethod
