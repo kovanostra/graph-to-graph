@@ -59,7 +59,7 @@ class TestGRUMessenger(TestCase):
         # Then
         self.assertTrue(np.allclose(update_gate_output_expected, update_gate_output))
 
-    def test_calculate_forget_gate_output_for_a_single_node_after_one_time_step(self):
+    def test_calculate_reset_gate_output_for_a_single_node_after_one_time_step(self):
         # Given
         messages = MULTIPLICATION_FACTOR * np.array([[[0, 0], [1, 1], [1, 1], [0, 0]],
                                                      [[1, 1], [0, 0], [1, 1], [0, 0]],
@@ -68,12 +68,12 @@ class TestGRUMessenger(TestCase):
         current_node = Node(BASE_GRAPH, BASE_GRAPH_NODE_FEATURES, 2)
         target_node_index = 0
         current_node.set_target(target_node_index)
-        forget_node_index = 1
-        update_gate_output_expected = np.array([0.5914589784327802, 0.5914589784327802])
+        reset_node_index = 1
+        reset_gate_output_expected = np.array([0.5914589784327802, 0.5914589784327802])
 
         # When
-        update_gate_output = self.gru_messenger._pass_through_forget_gate(messages, current_node,
-                                                                          BASE_GRAPH_NODE_FEATURES, forget_node_index)
+        reset_gate_output = self.gru_messenger._pass_through_reset_gate(messages, current_node,
+                                                                        BASE_GRAPH_NODE_FEATURES, reset_node_index)
 
         # Then
-        self.assertTrue(np.allclose(update_gate_output_expected, update_gate_output))
+        self.assertTrue(np.allclose(reset_gate_output_expected, reset_gate_output))

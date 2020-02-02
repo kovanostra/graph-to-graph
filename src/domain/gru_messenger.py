@@ -36,16 +36,16 @@ class GRUMessenger(Messenger):
             self.b_tree_update_gate)
         return update_gate_output
 
-    def _pass_through_forget_gate(self, messages: np.array, current_node: Node, node_features: np.array,
-                                  forget_node_index: int) -> np.array:
-        node_slice = (current_node.node_id, forget_node_index)
+    def _pass_through_reset_gate(self, messages: np.array, current_node: Node, node_features: np.array,
+                                 reset_node_index: int) -> np.array:
+        node_slice = (current_node.node_id, reset_node_index)
         message_from_a_neighbor_other_than_target = messages[node_slice]
-        update_gate_output = self._sigmoid(
+        reset_gate_output = self._sigmoid(
             self.w_tree_update_gate_features[node_slice].dot(node_features[current_node.node_id]) +
             self.u_tree_update_gate[node_slice].dot(
                 message_from_a_neighbor_other_than_target) +
             self.b_tree_update_gate)
-        return update_gate_output
+        return reset_gate_output
 
     def _get_messages_from_all_node_neighbors_except_target_summed(self,
                                                                    messages: np.ndarray,
