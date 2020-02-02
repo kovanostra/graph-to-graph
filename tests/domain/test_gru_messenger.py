@@ -34,8 +34,9 @@ class TestGRUMessenger(TestCase):
         messages_sum_expected.value = 0.1 * np.array([5, 3])
 
         # When
-        messages_sum = self.gru_messenger._get_messages_from_all_node_neighbors_except_target(messages, current_node,
-                                                                                              target_node_index)
+        messages_sum = self.gru_messenger._get_messages_from_all_node_neighbors_except_target_summed(messages,
+                                                                                                     current_node,
+                                                                                                     target_node_index)
 
         # Then
         self.assertTrue(np.array_equal(messages_sum_expected.value, messages_sum.value))
@@ -54,6 +55,25 @@ class TestGRUMessenger(TestCase):
         # When
         update_gate_output = self.gru_messenger._pass_through_update_gate(messages, current_node, target_node_index,
                                                                           BASE_GRAPH_NODE_FEATURES)
+
+        # Then
+        self.assertTrue(np.allclose(update_gate_output_expected, update_gate_output))
+
+    def test_calculate_forget_gate_output_for_a_single_node_after_one_time_step(self):
+        # Given
+        messages = MULTIPLICATION_FACTOR * np.array([[[0, 0], [1, 1], [1, 1], [0, 0]],
+                                                     [[1, 1], [0, 0], [1, 1], [0, 0]],
+                                                     [[1, 1], [1, 1], [0, 0], [4, 2]],
+                                                     [[0, 0], [0, 0], [4, 2], [0, 0]]])
+        current_node = Node(BASE_GRAPH, BASE_GRAPH_NODE_FEATURES, 2)
+        target_node_index = 0
+        current_node.set_target(target_node_index)
+        forget_node_index = 1
+        update_gate_output_expected = np.array([0.5914589784327802, 0.5914589784327802])
+
+        # When
+        update_gate_output = self.gru_messenger._pass_through_forget_gate(messages, current_node,
+                                                                          BASE_GRAPH_NODE_FEATURES, forget_node_index)
 
         # Then
         self.assertTrue(np.allclose(update_gate_output_expected, update_gate_output))
