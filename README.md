@@ -48,3 +48,7 @@ Currently, there is no entrypoint. However, the code can be explored through the
 -[ ] Training \
 -[ ] Hyperparameter optimization \
 -[ ] Evaluation 
+
+### Azure pipelines project
+
+https://dev.azure.com/kovamos/graph-to-graph
