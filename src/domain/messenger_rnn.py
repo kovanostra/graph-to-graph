@@ -9,7 +9,7 @@ from src.domain.node import Node
 
 
 class MessengerRNN(Messenger):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.w_graph_node_features = None
         self.w_graph_edge_features = None
@@ -40,9 +40,7 @@ class MessengerRNN(Messenger):
             messages_from_the_other_neighbors_summed.value)
         return message
 
-    def _get_messages_from_all_node_neighbors_except_target(self,
-                                                            messages: np.ndarray,
-                                                            node: Node,
+    def _get_messages_from_all_node_neighbors_except_target(self, messages: np.ndarray, node: Node,
                                                             edge: Edge) -> Message:
         messages_from_the_other_neighbors_summed = self._create_message()
         messages_from_the_other_neighbors_summed.value = np.zeros(node.features.shape[0])

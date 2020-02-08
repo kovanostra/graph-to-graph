@@ -34,8 +34,7 @@ class MessengerGRU(Messenger):
                 new_messages[edge_slice] = message.value
         return new_messages
 
-    def _get_message_inputs(self, messages: np.ndarray, node: Node, edge: Edge,
-                            graph: Graph) -> Message:
+    def _get_message_inputs(self, messages: np.ndarray, node: Node, edge: Edge, graph: Graph) -> Message:
         message = self._create_message()
         message.previous_messages = self._get_messages_from_all_node_neighbors_except_target_summed(messages,
                                                                                                     node,
