@@ -2,6 +2,7 @@ from unittest import TestCase
 
 import numpy as np
 
+from src.domain.Graph import Graph
 from src.domain.rnn_messenger import RNNMessenger
 from tests.fixtures.matrices_and_vectors import BASE_GRAPH_NODES_NUMBER, BASE_GRAPH_NODE_FEATURES, \
     BASE_GRAPH_EDGE_FEATURES, BASE_GRAPH, BASE_W_MATRIX, MULTIPLICATION_FACTOR
@@ -19,12 +20,12 @@ class TestRNNMessenger(TestCase):
         messages_expected = np.zeros((BASE_GRAPH_NODES_NUMBER,
                                       BASE_GRAPH_NODES_NUMBER,
                                       BASE_GRAPH_NODE_FEATURES.shape[1]))
+        graph = Graph(BASE_GRAPH,
+                      BASE_GRAPH_NODE_FEATURES,
+                      BASE_GRAPH_EDGE_FEATURES)
 
         # When
-        messages = self.rnn_messenger.compose_messages_from_nodes_to_targets(BASE_GRAPH,
-                                                                             BASE_GRAPH_NODE_FEATURES,
-                                                                             BASE_GRAPH_EDGE_FEATURES,
-                                                                             messages_expected)
+        messages = self.rnn_messenger.compose_messages_from_nodes_to_targets(graph, messages_expected)
 
         # Then
         self.assertTrue(np.array_equal(messages_expected.shape, messages.shape))
@@ -35,12 +36,12 @@ class TestRNNMessenger(TestCase):
                                      BASE_GRAPH_NODES_NUMBER,
                                      BASE_GRAPH_NODE_FEATURES.shape[1]))
         messages_non_zero_expected = np.nonzero(BASE_GRAPH)[1]
+        graph = Graph(BASE_GRAPH,
+                      BASE_GRAPH_NODE_FEATURES,
+                      BASE_GRAPH_EDGE_FEATURES)
 
         # When
-        messages = self.rnn_messenger.compose_messages_from_nodes_to_targets(BASE_GRAPH,
-                                                                             BASE_GRAPH_NODE_FEATURES,
-                                                                             BASE_GRAPH_EDGE_FEATURES,
-                                                                             messages_initial)
+        messages = self.rnn_messenger.compose_messages_from_nodes_to_targets(graph, messages_initial)
         messages_non_zero = np.nonzero(np.sum(messages, axis=2))[1]
 
         # Then
@@ -55,11 +56,12 @@ class TestRNNMessenger(TestCase):
                                                 [0.6, 0.6],
                                                 [0.55, 0.55],
                                                 [0., 0.]])
+        graph = Graph(BASE_GRAPH,
+                      BASE_GRAPH_NODE_FEATURES,
+                      BASE_GRAPH_EDGE_FEATURES)
 
         # When
-        messages_from_node = self.rnn_messenger.compose_messages_from_nodes_to_targets(BASE_GRAPH,
-                                                                                       BASE_GRAPH_NODE_FEATURES,
-                                                                                       BASE_GRAPH_EDGE_FEATURES,
+        messages_from_node = self.rnn_messenger.compose_messages_from_nodes_to_targets(graph,
                                                                                        messages_initial)[node_expected]
 
         # Then

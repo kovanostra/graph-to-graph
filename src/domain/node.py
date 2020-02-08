@@ -2,12 +2,13 @@ from typing import Tuple
 
 import numpy as np
 
+from src.domain.Graph import Graph
+
 
 class Node:
-    def __init__(self, graph: np.ndarray, all_nodes_features: np.ndarray, node_id: int):
-        self.graph = graph
+    def __init__(self, graph: Graph, node_id: int):
         self.node_id = node_id
-        self.features = self._get_node_features(all_nodes_features)
+        self.features = self._get_node_features(graph)
         self.neighbors = self._get_neighbors(graph)
         self.neighbors_count = len(self.neighbors)
         self.current_target = None
@@ -28,11 +29,11 @@ class Node:
         return "Node: " + str(self.node_id) + ". Features: " + str(self.features) + \
                ". Neighbors: " + str(self.neighbors) + ". Current target: " + str(self.current_target)
 
-    def _get_node_features(self, all_features: np.ndarray) -> np.ndarray:
-        return all_features[self.node_id]
+    def _get_node_features(self, graph: Graph) -> np.ndarray:
+        return graph.node_features[self.node_id]
 
-    def _get_neighbors(self, graph: np.ndarray) -> np.ndarray:
-        return np.nonzero(graph[self.node_id])[0]
+    def _get_neighbors(self, graph: Graph) -> np.ndarray:
+        return np.nonzero(graph.adjacency_matrix[self.node_id])[0]
 
     def _remove_current_target_from_neighbors(self, target_node_index: int) -> np.ndarray:
         return np.delete(self.neighbors, target_node_index)

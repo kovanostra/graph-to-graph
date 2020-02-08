@@ -2,14 +2,18 @@ from unittest import TestCase
 
 import numpy as np
 
+from src.domain.Graph import Graph
 from src.domain.node import Node
-from tests.fixtures.matrices_and_vectors import BASE_GRAPH_NODE_FEATURES, BASE_GRAPH
+from tests.fixtures.matrices_and_vectors import BASE_GRAPH_NODE_FEATURES, BASE_GRAPH, BASE_GRAPH_EDGE_FEATURES
 
 
 class TestNode(TestCase):
     def setUp(self) -> None:
+        graph = Graph(BASE_GRAPH,
+                      BASE_GRAPH_NODE_FEATURES,
+                      BASE_GRAPH_EDGE_FEATURES)
         self.current_node_id = 2
-        self.node = Node(BASE_GRAPH, BASE_GRAPH_NODE_FEATURES, self.current_node_id)
+        self.node = Node(graph, self.current_node_id)
 
     def test_set_target(self):
         # Given
