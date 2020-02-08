@@ -1,4 +1,4 @@
-from src.domain.message import Message
+from domain.interface.message import Message
 
 
 class GRUMessage(Message):

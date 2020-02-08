@@ -1,9 +1,9 @@
 import numpy as np
 
+from domain.interface.message import Message
+from domain.interface.messenger import Messenger
 from src.domain.Graph import Graph
 from src.domain.edge import Edge
-from src.domain.message import Message
-from src.domain.messenger import Messenger
 from src.domain.node import Node
 from src.domain.rnn_message import RNNMessage
 
