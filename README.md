@@ -40,7 +40,7 @@ Currently, there is no entrypoint. However, the code can be explored through the
 ### Progress
 
 -[x] Graph encoder \
--[ ] Graph to Junction tree encoder \
+-[ ] Tree decomposition \
 -[x] Junction tree encoder \
 -[ ] Variational autoencoder \
 -[ ] Junction tree decoder \
