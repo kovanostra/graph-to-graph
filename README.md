@@ -41,7 +41,7 @@ Currently, there is no entrypoint. However, the code can be explored through the
 
 -[x] Graph encoder \
 -[ ] Graph to Junction tree encoder \
--[ ] Junction tree encoder \
+-[x] Junction tree encoder \
 -[ ] Variational autoencoder \
 -[ ] Junction tree decoder \
 -[ ] Graph decoder \
