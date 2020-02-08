@@ -3,7 +3,7 @@ import numpy as np
 from src.domain.interface.message import Message
 
 
-class RNNMessage(Message):
+class MessageRNN(Message):
     def __init__(self):
         super().__init__()
         self.node_input = None

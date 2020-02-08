@@ -2,9 +2,9 @@ from unittest import TestCase
 
 import numpy as np
 
-from src.domain.Graph import Graph
+from src.domain.graph import Graph
 from src.domain.graph_encoder import GraphEncoder
-from src.domain.rnn_messenger import RNNMessenger
+from src.domain.messenger_rnn import MessengerRNN
 from tests.fixtures.matrices_and_vectors import BASE_GRAPH, BASE_GRAPH_NODE_FEATURES, \
     BASE_U_MATRIX, BASE_GRAPH_EDGE_FEATURES, BASE_W_MATRIX
 
@@ -12,7 +12,7 @@ from tests.fixtures.matrices_and_vectors import BASE_GRAPH, BASE_GRAPH_NODE_FEAT
 class TestGraphEncoder(TestCase):
 
     def setUp(self) -> None:
-        self.rnn_messenger = RNNMessenger()
+        self.rnn_messenger = MessengerRNN()
         self.rnn_messenger.w_graph_node_features = 0.1 * BASE_W_MATRIX
         self.rnn_messenger.w_graph_edge_features = 0.1 * BASE_W_MATRIX
         self.rnn_messenger.w_graph_neighbor_messages = 0.1 * BASE_W_MATRIX

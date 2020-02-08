@@ -2,12 +2,12 @@ from unittest import TestCase
 
 import numpy as np
 
-from src.domain.rnn_message import RNNMessage
+from src.domain.message_rnn import MessageRNN
 
 
 class TestMessage(TestCase):
     def setUp(self) -> None:
-        self.message = RNNMessage()
+        self.message = MessageRNN()
         self.message.node_input = np.array([1, 2])
         self.message.edge_input = np.array([-2, 2])
         self.message.neighbors_input = np.array([-1, 1])

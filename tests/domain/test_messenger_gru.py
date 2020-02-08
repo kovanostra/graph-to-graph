@@ -2,17 +2,18 @@ from unittest import TestCase
 
 import numpy as np
 
-from src.domain.Graph import Graph
-from src.domain.gru_message import GRUMessage
-from src.domain.gru_messenger import GRUMessenger
+from src.domain.edge import Edge
+from src.domain.graph import Graph
+from src.domain.message_gru import MessageGRU
+from src.domain.messenger_gru import MessengerGRU
 from src.domain.node import Node
 from tests.fixtures.matrices_and_vectors import BASE_W_MATRIX, BASE_GRAPH, BASE_GRAPH_NODE_FEATURES, \
     MULTIPLICATION_FACTOR, BASE_B_VECTOR, BASE_GRAPH_EDGE_FEATURES
 
 
-class TestGRUMessenger(TestCase):
+class TestMessengerGRU(TestCase):
     def setUp(self) -> None:
-        self.gru_messenger = GRUMessenger()
+        self.gru_messenger = MessengerGRU()
         self.gru_messenger.w_tree_update_gate_features = MULTIPLICATION_FACTOR * BASE_W_MATRIX
         self.gru_messenger.w_tree_forget_gate_features = MULTIPLICATION_FACTOR * BASE_W_MATRIX
         self.gru_messenger.w_tree_current_memory_message_features = MULTIPLICATION_FACTOR * BASE_W_MATRIX
@@ -32,15 +33,16 @@ class TestGRUMessenger(TestCase):
         graph = Graph(BASE_GRAPH,
                       BASE_GRAPH_NODE_FEATURES,
                       BASE_GRAPH_EDGE_FEATURES)
-        current_node = Node(graph, 2)
-        target_node_index = 1
-        messages_sum_expected = GRUMessage()
+        start_node = Node(graph, 2)
+        end_node = Node(graph, 1)
+        edge = Edge(graph, start_node, end_node)
+        messages_sum_expected = MessageGRU()
         messages_sum_expected.value = 0.1 * np.array([5, 3])
 
         # When
         messages_sum = self.gru_messenger._get_messages_from_all_node_neighbors_except_target_summed(messages,
-                                                                                                     current_node,
-                                                                                                     target_node_index)
+                                                                                                     start_node,
+                                                                                                     edge)
 
         # Then
         self.assertTrue(np.array_equal(messages_sum_expected.value, messages_sum.value))
@@ -54,14 +56,13 @@ class TestGRUMessenger(TestCase):
         graph = Graph(BASE_GRAPH,
                       BASE_GRAPH_NODE_FEATURES,
                       BASE_GRAPH_EDGE_FEATURES)
-        current_node = Node(graph, 2)
-        target_node_index = 1
-        current_node.set_target(target_node_index)
+        start_node = Node(graph, 2)
+        end_node = Node(graph, 1)
+        edge = Edge(graph, start_node, end_node)
         update_gate_output_expected = np.array([0.60587367, 0.60587367])
 
         # When
-        update_gate_output = self.gru_messenger._pass_through_update_gate(messages, current_node, target_node_index,
-                                                                          graph)
+        update_gate_output = self.gru_messenger._pass_through_update_gate(messages, start_node, edge, graph)
 
         # Then
         self.assertTrue(np.allclose(update_gate_output_expected, update_gate_output))
@@ -75,15 +76,13 @@ class TestGRUMessenger(TestCase):
         graph = Graph(BASE_GRAPH,
                       BASE_GRAPH_NODE_FEATURES,
                       BASE_GRAPH_EDGE_FEATURES)
-        current_node = Node(graph, 2)
-        target_node_index = 0
-        current_node.set_target(target_node_index)
-        reset_node_index = 1
+        start_node = Node(graph, 2)
+        end_node = Node(graph, 0)
+        reset_edge = Edge(graph, start_node, end_node)
         reset_gate_output_expected = np.array([0.5914589784327802, 0.5914589784327802])
 
         # When
-        reset_gate_output = self.gru_messenger._pass_through_reset_gate(messages, current_node, reset_node_index,
-                                                                        graph)
+        reset_gate_output = self.gru_messenger._pass_through_reset_gate(messages, start_node, reset_edge, graph)
 
         # Then
         self.assertTrue(np.allclose(reset_gate_output_expected, reset_gate_output))
@@ -97,14 +96,13 @@ class TestGRUMessenger(TestCase):
         graph = Graph(BASE_GRAPH,
                       BASE_GRAPH_NODE_FEATURES,
                       BASE_GRAPH_EDGE_FEATURES)
-        current_node = Node(graph, 2)
-        target_node_index = 0
-        current_node.set_target(target_node_index)
+        start_node = Node(graph, 2)
+        end_node = Node(graph, 0)
+        edge = Edge(graph, start_node, end_node)
         current_memory_message_expected = np.array([0.344843, 0.344843])
 
         # When
-        current_memory_message = self.gru_messenger._get_current_memory_message(messages, current_node,
-                                                                                target_node_index, graph)
+        current_memory_message = self.gru_messenger._get_current_memory_message(messages, start_node, edge, graph)
 
         # Then
         self.assertTrue(np.allclose(current_memory_message_expected, current_memory_message))

@@ -1,7 +1,7 @@
 from src.domain.interface.message import Message
 
 
-class GRUMessage(Message):
+class MessageGRU(Message):
 
     def __init__(self):
         super().__init__()

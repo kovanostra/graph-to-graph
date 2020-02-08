@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.domain.Graph import Graph
+from src.domain.graph import Graph
 from src.domain.interface.Encoder import Encoder
 from src.domain.interface.messenger import Messenger
 
