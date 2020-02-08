@@ -1,6 +1,6 @@
 import numpy as np
 
-from domain.interface.message import Message
+from src.domain.interface.message import Message
 
 
 class RNNMessage(Message):

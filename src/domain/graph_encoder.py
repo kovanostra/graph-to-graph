@@ -1,8 +1,8 @@
 import numpy as np
 
-from domain.interface.Encoder import Encoder
-from domain.interface.messenger import Messenger
 from src.domain.Graph import Graph
+from src.domain.interface.Encoder import Encoder
+from src.domain.interface.messenger import Messenger
 
 
 class GraphEncoder(Encoder):

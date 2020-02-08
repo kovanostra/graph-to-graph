@@ -1,9 +1,9 @@
 import numpy as np
 
-from domain.interface.message import Message
-from domain.interface.messenger import Messenger
 from src.domain.Graph import Graph
 from src.domain.gru_message import GRUMessage
+from src.domain.interface.message import Message
+from src.domain.interface.messenger import Messenger
 from src.domain.node import Node
 
 
