@@ -1,3 +1,2 @@
-rdkit
 numpy==1.17.4
 tox==3.14.3
