@@ -9,7 +9,6 @@ setup(
     author='Michail Kovanis',
     description='Multi-modal Graph-to-Graph Translation for Molecular Optimization',
     install_requires=[
-        'numpy==1.17.4',
-        'rdkit'
+        'numpy==1.17.4'
     ],
 )
