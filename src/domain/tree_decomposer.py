@@ -34,16 +34,19 @@ class TreeDecomposer:
 
     def _create_junction_tree(self, bonds_not_in_rings: list, rings: rdkit.Chem.GetSymmSSSR) -> Graph:
         all_clusters = sorted(bonds_not_in_rings + rings)
+        print(all_clusters)
         tree_nodes_count = len(all_clusters)
         adjacency_matrix = np.zeros((tree_nodes_count, tree_nodes_count))
         for current_cluster_index in range(tree_nodes_count - 1):
             current_cluster = all_clusters[current_cluster_index]
             for next_cluster_index in range(current_cluster_index, tree_nodes_count):
                 next_cluster = all_clusters[next_cluster_index]
-                if current_cluster[-1] == next_cluster[0] or self._clusters_share_two_atoms(current_cluster,
-                                                                                            next_cluster):
-                    adjacency_matrix[current_cluster_index, next_cluster_index] = 1
-                    adjacency_matrix[next_cluster_index, current_cluster_index] = 1
+                if next_cluster_index != current_cluster_index:
+                    if len(current_cluster) == 2 and (current_cluster[-1] in next_cluster
+                                                      or current_cluster[0] in next_cluster) \
+                            or self._clusters_share_two_atoms(current_cluster, next_cluster):
+                        adjacency_matrix[current_cluster_index, next_cluster_index] = 1
+                        adjacency_matrix[next_cluster_index, current_cluster_index] = 1
 
         return self._create_graph(adjacency_matrix)
 
@@ -58,7 +61,7 @@ class TreeDecomposer:
             current_ring = rings[ring_index]
             next_ring = rings[ring_index + 1]
             if self._rings_share_more_than_two_atoms(current_ring, next_ring):
-                merged_rings.append(self._get_biggest_ring(current_ring, next_ring))
+                merged_rings.append(self._merge(current_ring, next_ring))
                 ring_index += 2
             else:
                 merged_rings.append(current_ring)
@@ -68,11 +71,10 @@ class TreeDecomposer:
         return merged_rings
 
     @staticmethod
-    def _get_biggest_ring(current_ring: list, next_ring: list) -> list:
-        biggest_ring = current_ring
-        if len(current_ring) < len(next_ring):
-            biggest_ring = next_ring
-        return biggest_ring
+    def _merge(current_ring: list, next_ring: list) -> list:
+        all_common_elements_in_rings = set(next_ring) - set(current_ring)
+        merged_ring = current_ring + list(all_common_elements_in_rings)
+        return merged_ring
 
     @staticmethod
     def _rings_share_more_than_two_atoms(current_ring: list, next_ring: list) -> bool:

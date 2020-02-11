@@ -56,3 +56,23 @@ class TestTreeDecomposer(TestCase):
 
         # Then
         self.assertTrue(np.array_equal(junction_tree_expected.adjacency_matrix, junction_tree.adjacency_matrix))
+
+    def test_tree_decomposer_when_molecule_contains_multiple_bonds_and_rings_that_share_more_than_two_atoms(self):
+        # Given
+        molecule_in_smiles = 'C12C3C(C(C1)CCC2)(C4CC3CC4)C(C)CC'
+        molecule = Chem.MolFromSmiles(molecule_in_smiles)
+        junction_tree_expected = Graph(np.array([[0, 1, 1, 0, 0, 0],
+                                                 [1, 0, 1, 0, 0, 0],
+                                                 [1, 1, 0, 1, 1, 0],
+                                                 [0, 0, 1, 0, 1, 0],
+                                                 [0, 0, 1, 1, 0, 1],
+                                                 [0, 0, 0, 0, 1, 0]]),
+                                       Chem.GetAdjacencyMatrix(molecule),
+                                       Chem.GetAdjacencyMatrix(molecule))
+
+        # When
+        junction_tree = self.tree_decomposer.decompose(molecule)
+
+        # Then
+        print(junction_tree.adjacency_matrix)
+        self.assertTrue(np.array_equal(junction_tree_expected.adjacency_matrix, junction_tree.adjacency_matrix))
