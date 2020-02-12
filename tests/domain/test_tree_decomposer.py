@@ -61,9 +61,9 @@ class TestTreeDecomposer(TestCase):
         # Given
         molecule_in_smiles = 'C12C3C(C(C1)CCC2)(C4CC3CC4)C(C)CC'
         molecule = Chem.MolFromSmiles(molecule_in_smiles)
-        junction_tree_expected = Graph(np.array([[0, 1, 1, 0, 0, 0],
+        junction_tree_expected = Graph(np.array([[1, 1, 0, 1, 1, 0],
                                                  [1, 0, 1, 0, 0, 0],
-                                                 [1, 1, 0, 1, 1, 0],
+                                                 [0, 1, 1, 0, 0, 0],
                                                  [0, 0, 1, 0, 1, 0],
                                                  [0, 0, 1, 1, 0, 1],
                                                  [0, 0, 0, 0, 1, 0]]),
