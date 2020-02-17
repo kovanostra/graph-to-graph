@@ -15,14 +15,13 @@ class TestTreeDecomposer(TestCase):
         # Given
         molecule_in_smiles = 'Cc1ccccc1'
         molecule = Chem.MolFromSmiles(molecule_in_smiles)
-        self.tree_decomposer.set_molecule_and_properties(molecule)
         junction_tree_expected = Graph(np.array([[0, 1],
                                                  [1, 0]]),
                                        Chem.GetAdjacencyMatrix(molecule),
                                        Chem.GetAdjacencyMatrix(molecule))
 
         # When
-        junction_tree = self.tree_decomposer.decompose()
+        junction_tree = self.tree_decomposer.decompose(molecule)
 
         # Then
         self.assertTrue(np.array_equal(junction_tree_expected.adjacency_matrix, junction_tree.adjacency_matrix))
@@ -31,14 +30,13 @@ class TestTreeDecomposer(TestCase):
         # Given
         molecule_in_smiles = 'Cc1cc2C=Cc(c1)c2'
         molecule = Chem.MolFromSmiles(molecule_in_smiles)
-        self.tree_decomposer.set_molecule_and_properties(molecule)
         junction_tree_expected = Graph(np.array([[0, 1],
                                                  [1, 0]]),
                                        Chem.GetAdjacencyMatrix(molecule),
                                        Chem.GetAdjacencyMatrix(molecule))
 
         # When
-        junction_tree = self.tree_decomposer.decompose()
+        junction_tree = self.tree_decomposer.decompose(molecule)
 
         # Then
         self.assertTrue(np.array_equal(junction_tree_expected.adjacency_matrix, junction_tree.adjacency_matrix))
@@ -47,7 +45,6 @@ class TestTreeDecomposer(TestCase):
         # Given
         molecule_in_smiles = 'CC1=CC2=CC=CC=C2C=C1'
         molecule = Chem.MolFromSmiles(molecule_in_smiles)
-        self.tree_decomposer.set_molecule_and_properties(molecule)
         junction_tree_expected = Graph(np.array([[0, 1, 0],
                                                  [1, 0, 1],
                                                  [0, 1, 0]]),
@@ -55,7 +52,7 @@ class TestTreeDecomposer(TestCase):
                                        Chem.GetAdjacencyMatrix(molecule))
 
         # When
-        junction_tree = self.tree_decomposer.decompose()
+        junction_tree = self.tree_decomposer.decompose(molecule)
 
         # Then
         self.assertTrue(np.array_equal(junction_tree_expected.adjacency_matrix, junction_tree.adjacency_matrix))
@@ -64,7 +61,6 @@ class TestTreeDecomposer(TestCase):
         # Given
         molecule_in_smiles = 'C12C3C(C(C1)CCC2)(C4CC3CC4)C(C)CC'
         molecule = Chem.MolFromSmiles(molecule_in_smiles)
-        self.tree_decomposer.set_molecule_and_properties(molecule)
         junction_tree_expected = Graph(np.array([[0, 0, 0, 0, 0, 1, 0, 0],
                                                  [0, 0, 0, 0, 0, 1, 0, 0],
                                                  [0, 0, 0, 0, 0, 0, 0, 1],
@@ -77,7 +73,7 @@ class TestTreeDecomposer(TestCase):
                                        Chem.GetAdjacencyMatrix(molecule))
 
         # When
-        junction_tree = self.tree_decomposer.decompose()
+        junction_tree = self.tree_decomposer.decompose(molecule)
 
         # Then
         self.assertTrue(np.array_equal(junction_tree_expected.adjacency_matrix, junction_tree.adjacency_matrix))

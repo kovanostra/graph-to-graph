@@ -16,19 +16,19 @@ class TreeDecomposer:
         self.atoms_in_molecule = None
         self.cluster_graph = None
 
-    def set_molecule_and_properties(self, molecule: rdkit.Chem.rdchem.Mol) -> None:
-        self.molecule = molecule
-        self.bonds = molecule.GetBonds()
-        self.rings = [list(ring) for ring in Chem.GetSymmSSSR(self.molecule)]
-        self.atoms_in_molecule = len(Chem.GetAdjacencyMatrix(self.molecule))
-
-    def decompose(self) -> Graph:
+    def decompose(self, molecule: rdkit.Chem.rdchem.Mol) -> Graph:
+        self._set_molecular_properties(molecule)
         self._extract_all_bonds_not_in_molecular_rings()
         self._merge_cluster_rings_sharing_more_than_two_atoms()
         self._create_cluster_graph()
         self._get_cluster_graph_without_rings()
-        junction_tree = self._create_junction_tree()
-        return junction_tree
+        return self._create_junction_tree()
+
+    def _set_molecular_properties(self, molecule: rdkit.Chem.rdchem.Mol) -> None:
+        self.molecule = molecule
+        self.bonds = molecule.GetBonds()
+        self.rings = [list(ring) for ring in Chem.GetSymmSSSR(self.molecule)]
+        self.atoms_in_molecule = len(Chem.GetAdjacencyMatrix(self.molecule))
 
     def _extract_all_bonds_not_in_molecular_rings(self) -> None:
         bonds_not_in_molecular_rings = []
@@ -36,6 +36,22 @@ class TreeDecomposer:
             if not bond.IsInRing():
                 bonds_not_in_molecular_rings.append([bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()])
         self.bonds = bonds_not_in_molecular_rings
+
+    def _merge_cluster_rings_sharing_more_than_two_atoms(self) -> None:
+        merged_rings = []
+        ring_index = 0
+        while ring_index < len(self.rings) - 1:
+            current_ring, next_ring = self.rings[ring_index], self.rings[ring_index + 1]
+            if self._rings_share_more_than_two_atoms(current_ring, next_ring):
+                merged_rings.append(self._merge(current_ring, next_ring))
+                ring_index += 2
+            else:
+                merged_rings.append(current_ring)
+                ring_index += 1
+        if ring_index == 1:
+            merged_rings.append(next_ring)
+        if merged_rings:
+            self.rings = merged_rings
 
     def _create_cluster_graph(self):
         self.cluster_graph = sorted(self.bonds + self.rings)
@@ -66,36 +82,6 @@ class TreeDecomposer:
                     adjacency_matrix[next_cluster_index, current_cluster_index] = 1
 
         return self._create_graph(adjacency_matrix)
-
-    @staticmethod
-    def _create_graph(adjacency_matrix: np.array) -> Graph:
-        return Graph(adjacency_matrix, np.array([[]]), np.array([[]]))
-
-    def _merge_cluster_rings_sharing_more_than_two_atoms(self) -> None:
-        merged_rings = []
-        ring_index = 0
-        while ring_index < len(self.rings) - 1:
-            current_ring, next_ring = self.rings[ring_index], self.rings[ring_index + 1]
-            if self._rings_share_more_than_two_atoms(current_ring, next_ring):
-                merged_rings.append(self._merge(current_ring, next_ring))
-                ring_index += 2
-            else:
-                merged_rings.append(current_ring)
-                ring_index += 1
-        if ring_index == 1:
-            merged_rings.append(next_ring)
-        if merged_rings:
-            self.rings = merged_rings
-
-    @staticmethod
-    def _merge(current_ring: list, next_ring: list) -> list:
-        all_common_elements_in_rings = set(next_ring) - set(current_ring)
-        merged_ring = current_ring + list(all_common_elements_in_rings)
-        return merged_ring
-
-    @staticmethod
-    def _rings_share_more_than_two_atoms(current_ring: list, next_ring: list) -> bool:
-        return len(set(current_ring) & set(next_ring)) > 2
 
     def _clusters_share_at_least_one_atom(self, current_cluster_index: int, next_cluster_index: int) -> bool:
         current_cluster, next_cluster = self.cluster_graph[current_cluster_index], self.cluster_graph[
@@ -130,18 +116,32 @@ class TreeDecomposer:
         atoms_in_molecule = new_atoms_in_molecule
         return new_nodes, atoms_in_molecule
 
-    @staticmethod
-    def _create_node_with_new_atoms(atoms_in_molecule: int, new_atoms_in_molecule: int) -> list:
-        return [dummy_atom for dummy_atom in
-                range(atoms_in_molecule, new_atoms_in_molecule)]
+    def _remove_shared_atoms(self, current_cluster_index: int, next_cluster_index: int,
+                             shared_atoms: list) -> None:
+        for atom in shared_atoms:
+            self.cluster_graph[current_cluster_index].remove(atom)
+            self.cluster_graph[next_cluster_index].remove(atom)
 
     def _get_shared_atoms(self, current_cluster_index: int, next_cluster_index: int) -> list:
         current_cluster, next_cluster = self.cluster_graph[current_cluster_index], self.cluster_graph[
             next_cluster_index]
         return [atom for atom in current_cluster if atom in next_cluster]
 
-    def _remove_shared_atoms(self, current_cluster_index: int, next_cluster_index: int,
-                             shared_atoms: list) -> None:
-        for atom in shared_atoms:
-            self.cluster_graph[current_cluster_index].remove(atom)
-            self.cluster_graph[next_cluster_index].remove(atom)
+    @staticmethod
+    def _create_graph(adjacency_matrix: np.array) -> Graph:
+        return Graph(adjacency_matrix, np.array([[]]), np.array([[]]))
+
+    @staticmethod
+    def _merge(current_ring: list, next_ring: list) -> list:
+        all_common_elements_in_rings = set(next_ring) - set(current_ring)
+        merged_ring = current_ring + list(all_common_elements_in_rings)
+        return merged_ring
+
+    @staticmethod
+    def _rings_share_more_than_two_atoms(current_ring: list, next_ring: list) -> bool:
+        return len(set(current_ring) & set(next_ring)) > 2
+
+    @staticmethod
+    def _create_node_with_new_atoms(atoms_in_molecule: int, new_atoms_in_molecule: int) -> list:
+        return [dummy_atom for dummy_atom in
+                range(atoms_in_molecule, new_atoms_in_molecule)]
