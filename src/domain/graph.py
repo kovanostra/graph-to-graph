@@ -9,6 +9,11 @@ class Graph:
         self.number_of_nodes = self._get_number_of_nodes()
         self.number_of_node_features = self._get_number_of_node_features()
 
+    def __eq__(self, o):
+        return np.array_equal(self.adjacency_matrix, o.adjacency_matrix) and \
+               np.array_equal(self.node_features, o.node_features) and \
+               np.array_equal(self.edge_features, o.edge_features)
+
     def _get_number_of_nodes(self):
         return self.adjacency_matrix.shape[0]
 
