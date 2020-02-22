@@ -21,16 +21,26 @@ Python 3.6
 Run (only for tests at the moment)
 ```
 numpy==1.17.4
+rdkit==2019.09.3.0
 ```
+
+Rdkit can be installed through conda: https://anaconda.org/rdkit/rdkit
 
 Build
 ```
 tox==3.14.3
+tox-conda==0.2.1
 ```
-To run all tests and build the project, just cd to Graph_to_graph/ and run (with sudo if necessary)
+
+tox-conda can be installed through pip and it is necessary for building when using conda packages: https://github.com/tox-dev/tox-conda
+
+
+To run all tests and build the project, just cd to ~/graph_to_graph/ and run (with sudo if necessary)
 ```
 tox
 ```
+
+This will automatically create an artifact and place it in ~/graph_to_graph/.tox/dist/graph-to-graph-version.zip. The version can be specified in the setup.py. The contents of this folder are cleaned at the start of every new build.
 
 ### Entrypoint
 
