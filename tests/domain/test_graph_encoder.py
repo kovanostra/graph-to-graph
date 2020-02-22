@@ -16,13 +16,12 @@ class TestGraphEncoder(TestCase):
         self.rnn_messenger.w_graph_node_features = 0.1 * BASE_W_MATRIX
         self.rnn_messenger.w_graph_edge_features = 0.1 * BASE_W_MATRIX
         self.rnn_messenger.w_graph_neighbor_messages = 0.1 * BASE_W_MATRIX
-        self.graph_encoder = GraphEncoder(self.rnn_messenger)
+        self.graph_encoder = GraphEncoder(messenger=self.rnn_messenger, time_steps=1)
         self.graph_encoder.u_graph_node_features = 0.1 * BASE_U_MATRIX
         self.graph_encoder.u_graph_neighbor_messages = 0.1 * BASE_U_MATRIX
 
     def test_encode_graph_returns_the_expected_encoding_for_a_node_after_one_time_step(self):
         # Given
-        self.rnn_messenger.time_steps = 1
         node = 0
         node_encoding_expected = np.array([0.53, 0.53])
         graph = Graph(BASE_GRAPH,
@@ -37,7 +36,6 @@ class TestGraphEncoder(TestCase):
 
     def test_encode_graph_returns_the_expected_shape(self):
         # Given
-        self.rnn_messenger.time_steps = 1
         encoded_graph_shape_expected = BASE_GRAPH_NODE_FEATURES.shape
         graph = Graph(BASE_GRAPH,
                       BASE_GRAPH_NODE_FEATURES,

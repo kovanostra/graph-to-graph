@@ -1,15 +1,24 @@
 import numpy as np
 
 from src.domain.graph import Graph
-from src.domain.interface.Encoder import Encoder
+from src.domain.interface.encoder import Encoder
 from src.domain.interface.messenger import Messenger
 
 
 class GraphEncoder(Encoder):
-    def __init__(self, messenger: Messenger):
+    def __init__(self, messenger: Messenger, time_steps):
+        self.time_steps = time_steps
         self.messenger = messenger
         self.u_graph_node_features = None
         self.u_graph_neighbor_messages = None
+
+    def initialize(self, graph: Graph, weight: float):
+        self.u_graph_node_features = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+                                                                    weight=weight,
+                                                                    features_length=graph.node_features.shape[1])
+        self.u_graph_neighbor_messages = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+                                                                        weight=weight,
+                                                                        features_length=graph.node_features.shape[1])
 
     def encode(self, graph: Graph) -> np.ndarray:
         messages = self._send_messages(graph)
@@ -20,7 +29,7 @@ class GraphEncoder(Encoder):
         messages = np.zeros((graph.number_of_nodes,
                              graph.number_of_nodes,
                              graph.number_of_node_features))
-        for step in range(self.messenger.time_steps):
+        for step in range(self.time_steps):
             messages = self.messenger.compose_messages_from_nodes_to_targets(graph, messages)
         return messages
 
@@ -34,6 +43,12 @@ class GraphEncoder(Encoder):
         node_encoding_features = self.u_graph_node_features[node_id].dot(graph.node_features[node_id])
         node_encoding_messages = self.u_graph_neighbor_messages[node_id].dot(np.sum(messages[node_id], axis=0))
         return self._relu(node_encoding_features + node_encoding_messages)
+
+    @staticmethod
+    def _initialize_weight_matrix(adjacency_matrix: np.ndarray, weight: float, features_length: int) -> np.ndarray:
+        return np.array([adjacency_matrix[row_index, column_index] * weight * np.random.random(features_length)
+                         for row_index in range(adjacency_matrix.shape[0])
+                         for column_index in range(adjacency_matrix.shape[1])])
 
     @staticmethod
     def _relu(vector: np.ndarray) -> np.ndarray:

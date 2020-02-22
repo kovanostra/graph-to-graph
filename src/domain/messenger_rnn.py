@@ -9,11 +9,23 @@ from src.domain.node import Node
 
 
 class MessengerRNN(Messenger):
+
     def __init__(self) -> None:
         super().__init__()
         self.w_graph_node_features = None
         self.w_graph_edge_features = None
         self.w_graph_neighbor_messages = None
+
+    def initialize(self, graph: Graph, weight: float) -> None:
+        self.w_graph_node_features = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+                                                                    weight=weight,
+                                                                    features_length=graph.node_features.shape[1])
+        self.w_graph_edge_features = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+                                                                    weight=weight,
+                                                                    features_length=graph.node_features.shape[1])
+        self.w_graph_neighbor_messages = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+                                                                        weight=weight,
+                                                                        features_length=graph.node_features.shape[1])
 
     def compose_messages_from_nodes_to_targets(self, graph: Graph, messages: np.ndarray) -> np.ndarray:
         new_messages = np.zeros_like(messages)
@@ -49,6 +61,14 @@ class MessengerRNN(Messenger):
             messages_from_the_other_neighbors_summed.value = self.w_graph_neighbor_messages[neighbors_slice][0].dot(
                 messages[neighbors_slice][0])
         return messages_from_the_other_neighbors_summed
+
+    @staticmethod
+    def _initialize_weight_matrix(adjacency_matrix: np.ndarray,
+                                  weight: float,
+                                  features_length: int) -> np.ndarray:
+        return np.array([[row[column_index] * weight * np.random.random((features_length, features_length))
+                          for column_index in range(adjacency_matrix.shape[1])]
+                         for row in adjacency_matrix])
 
     @staticmethod
     def _create_node(graph: Graph, node_id: int) -> Node:

@@ -24,6 +24,28 @@ class TestMessengerGRU(TestCase):
         self.gru_messenger.b_tree_forget_gate = MULTIPLICATION_FACTOR * BASE_B_VECTOR
         self.gru_messenger.b_tree_current_memory_message = MULTIPLICATION_FACTOR * BASE_B_VECTOR
 
+    def test_initialize_returns_matrices_of_the_correct_shape(self):
+        # Given
+        graph = Graph(BASE_GRAPH,
+                      BASE_GRAPH_NODE_FEATURES,
+                      BASE_GRAPH_EDGE_FEATURES)
+        expected_matrix_shape = BASE_W_MATRIX.shape
+        expected_vector_shape = BASE_B_VECTOR.shape
+
+        # When
+        self.gru_messenger.initialize(graph=graph, weight=MULTIPLICATION_FACTOR)
+
+        # Then
+        self.assertEqual(self.gru_messenger.w_tree_update_gate_features.shape, expected_matrix_shape)
+        self.assertEqual(self.gru_messenger.w_tree_forget_gate_features.shape, expected_matrix_shape)
+        self.assertEqual(self.gru_messenger.w_tree_current_memory_message_features.shape, expected_matrix_shape)
+        self.assertEqual(self.gru_messenger.u_tree_update_gate.shape, expected_matrix_shape)
+        self.assertEqual(self.gru_messenger.u_tree_forget_gate.shape, expected_matrix_shape)
+        self.assertEqual(self.gru_messenger.u_tree_current_memory_message.shape, expected_matrix_shape)
+        self.assertEqual(self.gru_messenger.b_tree_update_gate.shape, expected_vector_shape)
+        self.assertEqual(self.gru_messenger.b_tree_forget_gate.shape, expected_vector_shape)
+        self.assertEqual(self.gru_messenger.b_tree_current_memory_message.shape, expected_vector_shape)
+
     def test_calculate_sum_of_messages_coming_from_neighbors_except_target_after_one_time_step(self):
         # Given
         messages = MULTIPLICATION_FACTOR * np.array([[[0, 0], [1, 1], [1, 1], [0, 0]],

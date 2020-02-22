@@ -49,6 +49,7 @@ Currently, there is no entrypoint. However, the code can be explored through the
 
 ### Progress
 
+-[ ] Entrypoint \
 -[x] Graph encoder \
 -[x] Tree decomposition \
 -[x] Junction tree encoder \

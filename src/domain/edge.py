@@ -19,7 +19,7 @@ class Edge:
         return self._remove_end_node_from_start_node_neighbors(), self.start_node.node_id
 
     def _extract_edge_features(self, graph: Graph) -> np.ndarray:
-        return graph.edge_features[self.start_node.node_id, self.end_node.node_id]
+        return graph.edge_features[self.start_node.node_id, self.end_node.node_id] if graph.edge_features.size else None
 
     def _remove_end_node_from_start_node_neighbors(self) -> np.ndarray:
         end_node_index = np.argwhere(self.start_node.neighbors == self.end_node.node_id)

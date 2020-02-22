@@ -21,6 +21,35 @@ class MessengerGRU(Messenger):
         self.b_tree_forget_gate = None
         self.b_tree_current_memory_message = None
 
+    def initialize(self, graph: Graph, weight: float, ) -> None:
+        self.w_tree_update_gate_features = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+                                                                          weight=weight,
+                                                                          features_length=graph.node_features.shape[1])
+        self.w_tree_forget_gate_features = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+                                                                          weight=weight,
+                                                                          features_length=graph.node_features.shape[1])
+        self.w_tree_current_memory_message_features = self._initialize_weight_matrix(
+            adjacency_matrix=graph.adjacency_matrix,
+            weight=weight,
+            features_length=graph.node_features.shape[1])
+        self.u_tree_update_gate = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+                                                                 weight=weight,
+                                                                 features_length=graph.node_features.shape[1])
+        self.u_tree_forget_gate = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+                                                                 weight=weight,
+                                                                 features_length=graph.node_features.shape[1])
+        self.u_tree_current_memory_message = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+                                                                            weight=weight,
+                                                                            features_length=graph.node_features.shape[
+                                                                                1])
+        self.b_tree_update_gate = self._initialize_weight_vector(weight=weight,
+                                                                 features_length=graph.node_features.shape[1])
+        self.b_tree_forget_gate = self._initialize_weight_vector(weight=weight,
+                                                                 features_length=graph.node_features.shape[1])
+        self.b_tree_current_memory_message = self._initialize_weight_vector(weight=weight,
+                                                                            features_length=graph.node_features.shape[
+                                                                                1])
+
     def compose_messages_from_nodes_to_targets(self, graph: Graph, messages: np.array) -> np.array:
         new_messages = np.zeros_like(messages)
         for node_id in range(graph.number_of_nodes):
@@ -93,6 +122,18 @@ class MessengerGRU(Messenger):
             self.u_tree_update_gate[edge_slice].dot(message_from_a_neighbor_other_than_target) +
             self.b_tree_update_gate)
         return reset_gate_output
+
+    @staticmethod
+    def _initialize_weight_matrix(adjacency_matrix: np.ndarray,
+                                  weight: float,
+                                  features_length: int) -> np.ndarray:
+        return np.array([[row[column_index] * weight * np.random.random((features_length, features_length))
+                          for column_index in range(adjacency_matrix.shape[1])]
+                         for row in adjacency_matrix])
+
+    @staticmethod
+    def _initialize_weight_vector(weight: float, features_length: int):
+        return weight * np.random.random(features_length)
 
     @staticmethod
     def _create_node(graph: Graph, node_id: int) -> Node:

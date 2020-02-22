@@ -16,6 +16,8 @@ class TreeDecomposer:
         self.number_of_nodes_in_cluster_graph = None
         self.junction_tree = None
         self.number_of_nodes_in_junction_tree = None
+        self.node_features = np.array([[]])
+        self.edge_features = np.array([[]])
 
     def decompose(self, molecule: rdkit.Chem.rdchem.Mol) -> Graph:
         self._set_molecular_properties(molecule)
@@ -129,9 +131,8 @@ class TreeDecomposer:
             next_cluster_index]
         return [atom for atom in current_cluster if atom in next_cluster]
 
-    @staticmethod
-    def _create_graph(adjacency_matrix: np.array) -> Graph:
-        return Graph(adjacency_matrix, np.array([[]]), np.array([[]]))
+    def _create_graph(self, adjacency_matrix: np.array) -> Graph:
+        return Graph(adjacency_matrix, self.node_features, self.edge_features)
 
     @staticmethod
     def _merge(current_ring: list, next_ring: list) -> list:
