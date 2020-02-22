@@ -4,11 +4,11 @@ import numpy as np
 import rdkit
 from rdkit import Chem
 
+from domain.message_passing.messenger_gru import MessengerGRU
+from domain.message_passing.messenger_rnn import MessengerRNN
 from src.domain.graph import Graph
 from src.domain.graph_encoder import GraphEncoder
 from src.domain.interface.messenger import Messenger
-from src.domain.messenger_gru import MessengerGRU
-from src.domain.messenger_rnn import MessengerRNN
 from src.domain.tree_decomposer import TreeDecomposer
 
 

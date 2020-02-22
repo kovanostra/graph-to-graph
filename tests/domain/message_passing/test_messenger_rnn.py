@@ -3,17 +3,17 @@ from unittest import TestCase
 import numpy as np
 
 from src.domain.graph import Graph
-from src.domain.messenger_rnn import MessengerRNN
+from src.domain.message_passing.messenger_rnn import MessengerRNN
 from tests.fixtures.matrices_and_vectors import BASE_GRAPH_NODES_NUMBER, BASE_GRAPH_NODE_FEATURES, \
     BASE_GRAPH_EDGE_FEATURES, BASE_GRAPH, BASE_W_MATRIX, MULTIPLICATION_FACTOR
 
 
 class TestMessengerRNN(TestCase):
     def setUp(self) -> None:
-        self.rnn_messenger = MessengerRNN()
-        self.rnn_messenger.w_graph_node_features = MULTIPLICATION_FACTOR * BASE_W_MATRIX
-        self.rnn_messenger.w_graph_edge_features = MULTIPLICATION_FACTOR * BASE_W_MATRIX
-        self.rnn_messenger.w_graph_neighbor_messages = MULTIPLICATION_FACTOR * BASE_W_MATRIX
+        self.messenger_rnn = MessengerRNN()
+        self.messenger_rnn.w_graph_node_features = MULTIPLICATION_FACTOR * BASE_W_MATRIX
+        self.messenger_rnn.w_graph_edge_features = MULTIPLICATION_FACTOR * BASE_W_MATRIX
+        self.messenger_rnn.w_graph_neighbor_messages = MULTIPLICATION_FACTOR * BASE_W_MATRIX
 
     def test_initialize_returns_matrices_of_the_correct_shape(self):
         # Given
@@ -23,12 +23,12 @@ class TestMessengerRNN(TestCase):
         expected_shape = BASE_W_MATRIX.shape
 
         # When
-        self.rnn_messenger.initialize(graph=graph, weight=MULTIPLICATION_FACTOR)
+        self.messenger_rnn.initialize(graph=graph, weight=MULTIPLICATION_FACTOR)
 
         # Then
-        self.assertEqual(self.rnn_messenger.w_graph_node_features.shape, expected_shape)
-        self.assertEqual(self.rnn_messenger.w_graph_edge_features.shape, expected_shape)
-        self.assertEqual(self.rnn_messenger.w_graph_neighbor_messages.shape, expected_shape)
+        self.assertEqual(expected_shape, self.messenger_rnn.w_graph_node_features.shape)
+        self.assertEqual(expected_shape, self.messenger_rnn.w_graph_edge_features.shape)
+        self.assertEqual(expected_shape, self.messenger_rnn.w_graph_neighbor_messages.shape)
 
     def test_get_the_messages_matrix_with_same_dimensions_as_the_graph(self):
         # Given
@@ -40,7 +40,7 @@ class TestMessengerRNN(TestCase):
                       BASE_GRAPH_EDGE_FEATURES)
 
         # When
-        messages = self.rnn_messenger.compose_messages_from_nodes_to_targets(graph, messages_expected)
+        messages = self.messenger_rnn.compose_messages_from_nodes_to_targets(graph, messages_expected)
 
         # Then
         self.assertTrue(np.array_equal(messages_expected.shape, messages.shape))
@@ -56,7 +56,7 @@ class TestMessengerRNN(TestCase):
                       BASE_GRAPH_EDGE_FEATURES)
 
         # When
-        messages = self.rnn_messenger.compose_messages_from_nodes_to_targets(graph, messages_initial)
+        messages = self.messenger_rnn.compose_messages_from_nodes_to_targets(graph, messages_initial)
         messages_non_zero = np.nonzero(np.sum(messages, axis=2))[1]
 
         # Then
@@ -76,7 +76,7 @@ class TestMessengerRNN(TestCase):
                       BASE_GRAPH_EDGE_FEATURES)
 
         # When
-        messages_from_node = self.rnn_messenger.compose_messages_from_nodes_to_targets(graph,
+        messages_from_node = self.messenger_rnn.compose_messages_from_nodes_to_targets(graph,
                                                                                        messages_initial)[node_expected]
 
         # Then

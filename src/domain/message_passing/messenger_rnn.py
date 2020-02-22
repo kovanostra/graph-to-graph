@@ -4,7 +4,7 @@ from src.domain.edge import Edge
 from src.domain.graph import Graph
 from src.domain.interface.message import Message
 from src.domain.interface.messenger import Messenger
-from src.domain.message_rnn import MessageRNN
+from src.domain.message_passing.message_rnn import MessageRNN
 from src.domain.node import Node
 
 

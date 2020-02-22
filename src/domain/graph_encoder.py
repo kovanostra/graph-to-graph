@@ -13,10 +13,10 @@ class GraphEncoder(Encoder):
         self.u_graph_neighbor_messages = None
 
     def initialize(self, graph: Graph, weight: float):
-        self.u_graph_node_features = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+        self.u_graph_node_features = self._initialize_weight_matrix(number_of_nodes=graph.number_of_nodes,
                                                                     weight=weight,
                                                                     features_length=graph.node_features.shape[1])
-        self.u_graph_neighbor_messages = self._initialize_weight_matrix(adjacency_matrix=graph.adjacency_matrix,
+        self.u_graph_neighbor_messages = self._initialize_weight_matrix(number_of_nodes=graph.number_of_nodes,
                                                                         weight=weight,
                                                                         features_length=graph.node_features.shape[1])
 
@@ -45,10 +45,9 @@ class GraphEncoder(Encoder):
         return self._relu(node_encoding_features + node_encoding_messages)
 
     @staticmethod
-    def _initialize_weight_matrix(adjacency_matrix: np.ndarray, weight: float, features_length: int) -> np.ndarray:
-        return np.array([adjacency_matrix[row_index, column_index] * weight * np.random.random(features_length)
-                         for row_index in range(adjacency_matrix.shape[0])
-                         for column_index in range(adjacency_matrix.shape[1])])
+    def _initialize_weight_matrix(number_of_nodes: int, weight: float, features_length: tuple) -> np.ndarray:
+        return np.array(
+            [weight * np.random.random((features_length, features_length)) for node in range(number_of_nodes)])
 
     @staticmethod
     def _relu(vector: np.ndarray) -> np.ndarray:
